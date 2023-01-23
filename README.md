@@ -1,5 +1,5 @@
 
-#Quick run Guide:
+# Quick run Guide:
 
 1.open terminal in folder
 
