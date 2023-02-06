@@ -1,12 +1,4 @@
-import {
-	Alert,
-	Box,
-	Button,
-	MenuItem,
-	Paper,
-	Table,
-	TableRow,
-} from "@mui/material";
+import { Alert, Box, Button, MenuItem, Paper, Table, TableRow } from "@mui/material";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -14,7 +6,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { render } from "react-dom";
 import { useForm } from "react-hook-form";
 
 type Classification =
@@ -80,13 +71,10 @@ const ClassificationForm = () => {
 		const formData = new FormData();
 		formData.append("file", data.file[0]);
 
-		const response = await fetch(
-			"https://pseudo-api.datafortress.cloud/uploadfile",
-			{
-				method: "POST",
-				body: formData,
-			}
-		);
+		const response = await fetch("api/uploadfile/", {
+			method: "POST",
+			body: formData,
+		});
 
 		if (!response.ok) {
 			setError("API error");
@@ -97,8 +85,7 @@ const ClassificationForm = () => {
 		const columns: Column[] = [];
 		for (let i in responseData) {
 			if (responseData[i].classification != null) {
-				responseData[i].classification = responseData[i]
-					.classification as Classification;
+				responseData[i].classification = responseData[i].classification as Classification;
 			} else {
 				responseData[i].classification = "";
 			}
@@ -127,17 +114,14 @@ const ClassificationForm = () => {
 
 		const requestOptions = {
 			method: "POST",
-			cors: "no-cors",
+			// cors: "no-cors",
 			headers: {
 				Accept: "application/json",
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify(postBody),
 		};
-		let response = await fetch(
-			"https://pseudo-api.datafortress.cloud/updatefile",
-			requestOptions
-		);
+		let response = await fetch("api/updatefile/", requestOptions);
 		console.log(await response.json());
 	};
 
@@ -195,12 +179,13 @@ const ClassificationForm = () => {
 					minHeight: "100%",
 				}}>
 				<Typography variant="h3" sx={{ textAlign: "center" }}>
-					Classification Form
+					Upload your file to scan for sensitive columns
 				</Typography>
 				<Box sx={{ display: "flex", justifyContent: "center" }}>
 					<form onSubmit={onSubmit}>
 						<Button
-							variant="contained"
+							variant="text"
+							// style={{backgroundColor: "#51b56d"}}
 							component="label"
 							sx={{ width: "fit-content" }}>
 							{fileName}
@@ -215,7 +200,9 @@ const ClassificationForm = () => {
 								accept=".csv,.json,.xlsx,.xls,.parquet"
 							/>
 						</Button>
-						<Button type="submit">Upload</Button>
+						<Button style={{ backgroundColor: "#51b56d" }} variant="contained" type="submit">
+							Upload and scan
+						</Button>
 					</form>
 				</Box>
 				{error ? <Alert severity="error">{error}</Alert> : null}
@@ -224,9 +211,7 @@ const ClassificationForm = () => {
 						<TableHead>
 							<TableCell sx={{ fontWeight: "bold" }}>Column Name</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Classification</TableCell>
-							<TableCell sx={{ fontWeight: "bold" }}>
-								Most Frequent Value
-							</TableCell>
+							<TableCell sx={{ fontWeight: "bold" }}>Most Frequent Value</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Max</TableCell>
 							<TableCell sx={{ fontWeight: "bold" }}>Min</TableCell>
 						</TableHead>
@@ -234,10 +219,18 @@ const ClassificationForm = () => {
 					</Table>
 				</TableContainer>
 				<Button
+					style={{ backgroundColor: "#51b56d" }}
 					sx={{ width: "fit-content", alignSelf: "center" }}
 					variant="contained"
 					onClick={postUpdate}>
-					Update
+					Pseudonymize
+				</Button>
+				<Button
+					style={{ backgroundColor: "#51b56d" }}
+					sx={{ width: "fit-content", alignSelf: "center" }}
+					variant="contained"
+					onClick={postUpdate}>
+					Anonymize
 				</Button>
 			</Box>
 		</Box>
