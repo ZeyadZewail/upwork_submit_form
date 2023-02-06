@@ -81,19 +81,21 @@ const ClassificationForm = () => {
 			return;
 		}
 
-		const responseData = await response.json();
-		const columns: Column[] = [];
-		for (let i in responseData) {
-			if (responseData[i].classification != null) {
-				responseData[i].classification = responseData[i].classification as Classification;
-			} else {
-				responseData[i].classification = "";
-			}
+		if (response.ok) {
+			const responseData = await response.json();
+			const columns: Column[] = [];
+			for (let i in responseData) {
+				if (responseData[i].classification != null) {
+					responseData[i].classification = responseData[i].classification as Classification;
+				} else {
+					responseData[i].classification = "";
+				}
 
-			const temp: Column = { name: i, ...responseData[i] };
-			columns.push(temp as Column);
+				const temp: Column = { name: i, ...responseData[i] };
+				columns.push(temp as Column);
+			}
+			setColumns(columns);
 		}
-		setColumns(columns);
 	};
 
 	const postUpdate = async () => {
@@ -122,7 +124,11 @@ const ClassificationForm = () => {
 			body: JSON.stringify(postBody),
 		};
 		let response = await fetch("api/updatefile/", requestOptions);
-		console.log(await response.json());
+		if (response.ok) {
+			console.log(await response.json());
+		} else {
+			window.location.replace("https://pseudonymisieren.de/premium-file-format");
+		}
 	};
 
 	const generateRows = (columns: Column[]) => {
