@@ -7,6 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { saveAs } from "file-saver";
 
 type Classification =
 	| ""
@@ -123,12 +124,17 @@ const ClassificationForm = () => {
 			},
 			body: JSON.stringify(postBody),
 		};
-		let response = await fetch("api/updatefile/", requestOptions);
-		if (response.ok) {
-			console.log(await response.json());
-		} else {
-			window.location.replace("https://pseudonymisieren.de/premium-file-format");
-		}
+
+		fetch("api/updatefile/", requestOptions)
+			.then(function (response) {
+				return response.blob();
+			})
+			.then(function (blob) {
+				saveAs(blob, fileName);
+			})
+			.catch((error) => {
+				window.location.replace("https://pseudonymisieren.de/premium-file-format");
+			});
 	};
 
 	const generateRows = (columns: Column[]) => {
